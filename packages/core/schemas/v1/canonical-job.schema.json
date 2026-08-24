@@ -1,0 +1,1170 @@
+{
+  "$comment": "Structural validation layer only; cross-record references, identifier uniqueness, and cross-value ordering require the semantic rules documented in packages/core/README.md.",
+  "$defs": {
+    "Compensation": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "minimum": {
+              "not": {
+                "type": "null"
+              }
+            }
+          },
+          "required": [
+            "minimum"
+          ]
+        },
+        {
+          "properties": {
+            "maximum": {
+              "not": {
+                "type": "null"
+              }
+            }
+          },
+          "required": [
+            "maximum"
+          ]
+        }
+      ],
+      "properties": {
+        "currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        },
+        "maximum": {
+          "anyOf": [
+            {
+              "pattern": "^(?:-?0(?:\\.0*)?|(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?)(?:[Ee][+-]?[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum"
+        },
+        "minimum": {
+          "anyOf": [
+            {
+              "pattern": "^(?:-?0(?:\\.0*)?|(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?)(?:[Ee][+-]?[0-9]+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum"
+        },
+        "period": {
+          "$ref": "#/$defs/CompensationPeriod"
+        }
+      },
+      "required": [
+        "currency",
+        "period"
+      ],
+      "title": "Compensation",
+      "type": "object"
+    },
+    "CompensationPeriod": {
+      "enum": [
+        "hour",
+        "month",
+        "year"
+      ],
+      "title": "CompensationPeriod",
+      "type": "string"
+    },
+    "ContentOrigin": {
+      "enum": [
+        "source",
+        "user",
+        "derived",
+        "ai_generated"
+      ],
+      "title": "ContentOrigin",
+      "type": "string"
+    },
+    "EmploymentType": {
+      "enum": [
+        "full_time",
+        "part_time",
+        "contract",
+        "temporary",
+        "internship",
+        "other",
+        "unknown"
+      ],
+      "title": "EmploymentType",
+      "type": "string"
+    },
+    "JobLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "country": {
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        }
+      },
+      "required": [
+        "country"
+      ],
+      "title": "JobLocation",
+      "type": "object"
+    },
+    "ProvenancedValue_Annotated_HttpUrl__FieldInfo_annotation_NoneType__required_True__json_schema_extra___pattern__Hh__Tt__Tt__Pp__Ss____": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[Annotated[HttpUrl, FieldInfo(annotation=NoneType, required=True, json_schema_extra={'pattern': '^[Hh][Tt][Tt][Pp][Ss]?://'})]]",
+      "type": "object"
+    },
+    "ProvenancedValue_Annotated_datetime__AfterValidator__": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "format": "date-time",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[Annotated[datetime, AfterValidator]]",
+      "type": "object"
+    },
+    "ProvenancedValue_Annotated_str__StringConstraints__": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[Annotated[str, StringConstraints]]",
+      "type": "object"
+    },
+    "ProvenancedValue_Compensation_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "$ref": "#/$defs/Compensation"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[Compensation]",
+      "type": "object"
+    },
+    "ProvenancedValue_EmploymentType_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "$ref": "#/$defs/EmploymentType"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[EmploymentType]",
+      "type": "object"
+    },
+    "ProvenancedValue_WorkplaceType_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "$ref": "#/$defs/WorkplaceType"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[WorkplaceType]",
+      "type": "object"
+    },
+    "ProvenancedValue_date_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "format": "date",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[date]",
+      "type": "object"
+    },
+    "ProvenancedValue_tuple_Annotated_str__StringConstraints___________": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Value",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[tuple[Annotated[str, StringConstraints], ...]]",
+      "type": "object"
+    },
+    "ProvenancedValue_tuple_JobLocation__________": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "confidence": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "derived"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "not": {
+                  "type": "null"
+                }
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "source"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "value": {
+          "items": {
+            "$ref": "#/$defs/JobLocation"
+          },
+          "title": "Value",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "sources"
+      ],
+      "title": "ProvenancedValue[tuple[JobLocation, ...]]",
+      "type": "object"
+    },
+    "SourceRecord": {
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "external_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "external_id"
+          ]
+        },
+        {
+          "properties": {
+            "source_url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "source_url"
+          ]
+        }
+      ],
+      "properties": {
+        "access_restrictions": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Access Restrictions",
+          "type": "array"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "provider": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Provider",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "terms_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Terms Url"
+        }
+      },
+      "required": [
+        "source_id",
+        "provider",
+        "observed_at"
+      ],
+      "title": "SourceRecord",
+      "type": "object"
+    },
+    "SourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "observed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Observed At"
+        },
+        "source_field": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Field"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id"
+      ],
+      "title": "SourceReference",
+      "type": "object"
+    },
+    "WorkplaceType": {
+      "enum": [
+        "onsite",
+        "hybrid",
+        "remote",
+        "other",
+        "unknown"
+      ],
+      "title": "WorkplaceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://github.com/lulobello/autonomous-career-engine/schemas/v1/canonical-job.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "application_url": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_Annotated_HttpUrl__FieldInfo_annotation_NoneType__required_True__json_schema_extra___pattern__Hh__Tt__Tt__Pp__Ss____"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "closing_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_date_"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "compensation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_Compensation_"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "description": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_Annotated_str__StringConstraints__"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "eligibility_constraints": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_tuple_Annotated_str__StringConstraints___________"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "employer": {
+      "$ref": "#/$defs/ProvenancedValue_Annotated_str__StringConstraints__"
+    },
+    "employment_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_EmploymentType_"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "job_id": {
+      "format": "uuid",
+      "title": "Job Id",
+      "type": "string"
+    },
+    "locations": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_tuple_JobLocation__________"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "posted_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_date_"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "posting_observed_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_Annotated_datetime__AfterValidator__"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "qualifications": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_tuple_Annotated_str__StringConstraints___________"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "requirements": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_tuple_Annotated_str__StringConstraints___________"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "responsibilities": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_tuple_Annotated_str__StringConstraints___________"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/SourceRecord"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "title": {
+      "$ref": "#/$defs/ProvenancedValue_Annotated_str__StringConstraints__"
+    },
+    "workplace_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProvenancedValue_WorkplaceType_"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "job_id",
+    "sources",
+    "employer",
+    "title"
+  ],
+  "title": "CanonicalJob",
+  "type": "object"
+}
