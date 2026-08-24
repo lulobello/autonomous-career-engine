@@ -1,0 +1,63 @@
+name: Integration proposal
+description: Propose a job source, ATS, model provider, or document adapter.
+title: "[Integration]: "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: integration_type
+    attributes:
+      label: Integration type
+      options:
+        - Job source
+        - Applicant tracking system
+        - Model provider
+        - Document renderer
+        - Import or export format
+        - Other adapter
+    validations:
+      required: true
+  - type: input
+    id: service
+    attributes:
+      label: Service or format
+      description: Provide its official name and public documentation URL.
+    validations:
+      required: true
+  - type: textarea
+    id: access
+    attributes:
+      label: Approved access method
+      description: Identify the documented API, feed, import, export, or user-driven mechanism.
+    validations:
+      required: true
+  - type: textarea
+    id: compliance
+    attributes:
+      label: Terms, limits, and data handling
+      description: Summarize applicable terms, robots or automation constraints, rate limits, authentication, and personal data exchanged.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: User value and bounded scope
+      description: Explain the smallest useful adapter behavior and what is explicitly excluded.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Privacy-safe test strategy
+      description: Explain how contract tests can run with synthetic fixtures and without live submissions.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I am not proposing to bypass access controls or platform restrictions.
+          required: true
+        - label: I have not copied third-party implementation or documentation into this issue.
+          required: true
