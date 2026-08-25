@@ -46,11 +46,15 @@ Owns the application state machine, review gates, ATS adapter contracts, field p
 
 ### `packages/tracking`
 
-Owns immutable application events, derived status views, outcome definitions, exports, and evaluation inputs. Learning uses recorded outcomes but does not silently mutate ranking policy.
+Owns immutable non-sensitive application-event envelopes, separately erasable sensitive details, derived status views, outcome definitions, exports, and evaluation inputs. Learning uses recorded outcomes but does not silently mutate ranking policy.
 
 ### `packages/shared`
 
 Owns narrowly shared primitives such as identifiers, timestamps, result types, configuration contracts, and redaction helpers. It must not become a miscellaneous dependency bucket.
+
+### `packages/persistence`
+
+Owns repository interfaces, the local SQLite adapter, units of work, migrations, backup and restore, retention and deletion, storage health, and credential references. It depends on domain contracts but domain packages never depend on SQLite or a persistence framework. Live secret values remain in a platform credential vault and never enter persistence records.
 
 ### `apps/api` and `apps/web`
 
@@ -65,7 +69,7 @@ The first milestone will specify exact schemas. All implementations must preserv
 - **Canonical job:** source identifier, source URL, observed time, normalized fields, raw-field provenance, and access policy metadata.
 - **Fit assessment:** hard-filter decisions, weighted factor results, evidence, uncertainty, explanation, and scoring-policy version.
 - **Application:** job and candidate references, workflow state, selected materials, review decision, submission policy, and timestamps.
-- **Application event:** immutable transition, actor, reason, correlation/idempotency key, and redacted metadata.
+- **Application event:** immutable non-sensitive envelope with opaque actor, policy version, decision, correlation/idempotency key, timestamp, and redacted control fields; optional sensitive description is a separately erasable linked detail.
 - **Outcome:** explicit event type, observed time, source, and optional user notes stored privately.
 
 ## Data flow and trust boundaries
@@ -100,6 +104,8 @@ discovered → shortlisted → drafting → ready-for-review
 
 Transitions are explicit and append an event. Withdrawal and archival are allowed from applicable nonterminal states. A retry reuses or safely supersedes the prior idempotency key and cannot create a second submission without a new approval.
 
+External-action claims persist `claimed`, `in_flight`, `succeeded`, `failed`, or `indeterminate`. If a provider may have accepted a submission but no receipt was durably stored, the claim becomes `indeterminate`; automatic replay is blocked until provider reconciliation or explicit human resolution.
+
 ## Automation modes
 
 - **`watch`:** discover, normalize, and rank without drafting or applying.
@@ -108,15 +114,19 @@ Transitions are explicit and append an event. Withdrawal and archival are allowe
 
 ## Persistence and privacy
 
-The storage technology will be decided in the first milestone. Regardless of technology:
+The accepted [local persistence decision](decisions/0001-local-persistence.md) uses one SQLite database per local workspace behind replaceable repository interfaces. `packages/core` remains database-independent. The database and managed backups live in the operating system's private per-user application-data directory, outside the repository and automatically synchronized folders.
 
-- personal data and credentials are local by default;
-- public fixtures are synthetic;
-- secrets use environment or platform secret storage, never the database or logs;
-- exports are explicit and redact internal metadata where appropriate;
-- deletion and retention semantics are testable;
-- schema migrations are versioned and reversible where practical;
-- telemetry is opt-in and excludes application content.
+Validated domain aggregates are stored as versioned canonical JSON snapshots with relational control metadata and indexes. Each audit event uses an immutable non-sensitive envelope; optional personal or descriptive content is stored in a separately erasable linked detail. Before an external action, workflow state, the durable idempotency claim, approved policy version and decision, and redacted audit envelope commit atomically. The provider receipt and terminal claim state commit after the external response because that side effect cannot share a SQLite transaction. One engine process may write a database at a time.
+
+Migrations are immutable ordered units with checksums and an application ledger. Pending migrations require a verified pre-migration backup and complete before autonomous workers start. A failed or unsupported migration blocks writes and recovers from a compatible backup rather than running improvised downgrade logic. A nontransactional migration stages a validated replacement on the active database's filesystem. The engine quiesces workers, closes connections, checkpoints or safely disposes WAL state, durably writes and atomically replaces the file, removes stale `-wal` and `-shm` sidecars after old connections close, and durably records parent-directory changes where supported. Ambiguous recovery state fails closed.
+
+The engine creates at most one scheduled managed backup per 24 hours, always backs up before migration, and retains the newest seven. Portable backups are authenticated and password-encrypted, include version and integrity metadata, and exclude credentials. Restore validates a same-filesystem temporary copy and uses the same quiesced, WAL-aware, durable replacement protocol before enabling workers.
+
+Raw job pages and form snapshots expire after 90 days. Archive preserves history but disables new autonomous actions. Permanent deletion removes selected content and linked sensitive audit details, leaves prior immutable envelopes unchanged, appends a content-free deletion-event envelope, rebuilds clean storage through the WAL-aware replacement protocol, clears managed backups that might contain the data, and creates a new clean backup. An interrupted deletion fails closed. Portable copies moved elsewhere remain the user's responsibility.
+
+Human-readable export is distinct from backup and is not restorable. It contains only user-selected, privacy-filtered data and excludes credentials, cookies, sessions, and unrelated secrets.
+
+Secrets use an operating-system credential vault. SQLite stores only opaque provider-and-purpose-scoped references. Live secret values never enter persistence records, exports, logs, errors, or tests. The first version relies on OS account security, user-only permissions, screen locking, and full-disk encryption for the active database and managed local backups; it does not add a separate application unlock password.
 
 ## Failure handling
 
@@ -127,6 +137,11 @@ The storage technology will be decided in the first milestone. Regardless of tec
 - Correlation identifiers connect events without exposing private content.
 - A circuit breaker or manual disable control can suspend a malfunctioning adapter.
 - Unsupported or changed external forms fail closed before submission.
+- Corrupt, unsafe, locked, or unsupported storage fails closed before autonomous workers start.
+- A credential-vault failure pauses only its dependent integration and emits a redacted event.
+- Low disk space or a required-backup failure blocks migration, restore, permanent deletion, and other maintenance that could reduce recoverability.
+- A stable provider idempotency key is reused where supported, and an `in_flight` claim is persisted before the external call.
+- A post-submit/pre-receipt crash that may have reached the provider becomes `indeterminate`; automatic replay stays blocked pending provider reconciliation or explicit human resolution.
 
 ## Testing architecture
 
@@ -134,7 +149,7 @@ The storage technology will be decided in the first milestone. Regardless of tec
 - **Contract:** each adapter against synthetic fixtures and deterministic provider doubles.
 - **Integration:** discovery through `ready-for-review`, including failure and resume paths.
 - **End to end:** a synthetic candidate and job; no live submission in default automation.
-- **Security:** secret scanning, redaction, malicious job content, authorization gates, and duplicate-submission resistance.
+- **Security:** secret scanning, redaction, malicious job content, authorization gates, WAL-bearing recovery, and post-submit crash tests that prove duplicate-submission resistance.
 - **Documentation:** relative links, capability-status accuracy, and runnable command checks.
 
 ## Evolution rules
@@ -144,3 +159,4 @@ The storage technology will be decided in the first milestone. Regardless of tec
 3. New integrations require an upstream and compliance evaluation.
 4. New automation cannot weaken review, audit, or idempotency guarantees.
 5. Splitting a package into a service requires a measured operational or security need, not anticipation alone.
+6. Changing the persistence security, migration, backup, retention, or deletion guarantees requires a superseding architecture decision.
