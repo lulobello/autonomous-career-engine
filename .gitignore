@@ -40,3 +40,7 @@ out/
 *.swp
 .DS_Store
 Thumbs.db
+
+# Agent workspaces
+.worktrees/
+.superpowers/

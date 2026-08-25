@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "candidate_id": "00000000-0000-4000-8000-000000000001",
+  "contact": {
+    "full_name": {
+      "value": "Avery Example",
+      "origin": "user",
+      "privacy": "private",
+      "export_permission": "review_required"
+    }
+  },
+  "skills": [
+    {
+      "skill_id": "20000000-0000-4000-8000-000000000001",
+      "name": {
+        "value": "Python",
+        "origin": "user",
+        "evidence_ids": ["10000000-0000-4000-8000-000000000001"],
+        "privacy": "private",
+        "export_permission": "review_required"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "10000000-0000-4000-8000-000000000001",
+      "kind": "user_attestation",
+      "statement": "Avery uses Python in fictional portfolio projects.",
+      "verification_status": "self_attested",
+      "privacy": "private",
+      "export_permission": "review_required",
+      "created_at": "2026-08-24T16:00:00Z"
+    }
+  ],
+  "created_at": "2026-08-24T16:00:00Z",
+  "updated_at": "2026-08-24T16:00:00Z"
+}

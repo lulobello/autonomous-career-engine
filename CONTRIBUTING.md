@@ -25,7 +25,10 @@ Thank you for helping build a transparent, responsible career workflow. Contribu
 5. Update documentation when an interface, workflow, status, or limitation changes.
 6. Open a pull request using the provided template.
 
-The foundation release contains documentation and package boundaries only. Language-specific setup commands will be added with the first executable vertical slice; do not introduce a framework or dependency manager in an unrelated pull request.
+The executable core package has its setup and verification commands in the
+[core package README](packages/core/README.md). Other packages remain
+documentation-only; do not introduce a framework or dependency manager in an
+unrelated pull request.
 
 ## Design expectations
 
@@ -55,7 +58,11 @@ Pull requests should explain what was tested and show the exact commands and res
 
 Do not mark a capability **Available** in the README until its implementation, tests, and user documentation are merged. Use **Experimental** only for working code whose interface or reliability is not yet stable.
 
-Architecture decisions that change a public interface should include a short decision record under `docs/` describing context, alternatives, and consequences.
+Architecture decisions that change a public interface or schema should include a
+short decision record under `docs/` describing context, alternatives, and
+consequences. Changes to public core schemas must regenerate `schemas/v1` and
+preserve the representative v1 fixtures; incompatible changes require a new major
+schema directory and migration guidance.
 
 ## Third-party material
 

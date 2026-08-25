@@ -1,0 +1,1160 @@
+{
+  "$comment": "Structural validation layer only; cross-record references, identifier uniqueness, and cross-value ordering require the semantic rules documented in packages/core/README.md.",
+  "$defs": {
+    "Certification": {
+      "additionalProperties": false,
+      "properties": {
+        "certification_id": {
+          "format": "uuid",
+          "title": "Certification Id",
+          "type": "string"
+        },
+        "issued_on": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceBackedValue_DateRange_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "issuer": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        },
+        "name": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        }
+      },
+      "required": [
+        "certification_id",
+        "name",
+        "issuer"
+      ],
+      "title": "Certification",
+      "type": "object"
+    },
+    "ContactInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_EmailStr_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "full_name": {
+          "$ref": "#/$defs/ProfileValue_Annotated_str__StringConstraints__"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_Annotated_str__StringConstraints__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_Annotated_str__StringConstraints__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "full_name"
+      ],
+      "title": "ContactInfo",
+      "type": "object"
+    },
+    "ContentOrigin": {
+      "enum": [
+        "source",
+        "user",
+        "derived",
+        "ai_generated"
+      ],
+      "title": "ContentOrigin",
+      "type": "string"
+    },
+    "DateRange": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start"
+      ],
+      "title": "DateRange",
+      "type": "object"
+    },
+    "Education": {
+      "additionalProperties": false,
+      "properties": {
+        "credential": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        },
+        "dates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceBackedValue_DateRange_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "education_id": {
+          "format": "uuid",
+          "title": "Education Id",
+          "type": "string"
+        },
+        "institution": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        }
+      },
+      "required": [
+        "education_id",
+        "institution",
+        "credential"
+      ],
+      "title": "Education",
+      "type": "object"
+    },
+    "EvidenceBackedValue_Annotated_str__StringConstraints__": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "evidence_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "default": "user",
+          "enum": [
+            "source",
+            "user",
+            "derived"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "evidence_ids"
+      ],
+      "title": "EvidenceBackedValue[Annotated[str, StringConstraints]]",
+      "type": "object"
+    },
+    "EvidenceBackedValue_DateRange_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "evidence_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "default": "user",
+          "enum": [
+            "source",
+            "user",
+            "derived"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "value": {
+          "$ref": "#/$defs/DateRange"
+        }
+      },
+      "required": [
+        "value",
+        "evidence_ids"
+      ],
+      "title": "EvidenceBackedValue[DateRange]",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "user_attestation",
+        "employment_record",
+        "education_record",
+        "certification",
+        "portfolio_artifact",
+        "reference"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceRecord": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "user_attestation"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "verification_status": {
+                "enum": [
+                  "self_attested",
+                  "disputed"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "not": {
+                  "required": [
+                    "verification_status"
+                  ]
+                }
+              },
+              {
+                "properties": {
+                  "verification_status": {
+                    "const": "self_attested"
+                  }
+                },
+                "required": [
+                  "verification_status"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "verified_at": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verification_status": {
+                "enum": [
+                  "source_verified",
+                  "third_party_verified"
+                ]
+              }
+            },
+            "required": [
+              "verification_status"
+            ]
+          },
+          "then": {
+            "anyOf": [
+              {
+                "properties": {
+                  "issuer": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "issuer"
+                ]
+              },
+              {
+                "properties": {
+                  "source_url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source_url"
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "applicable_dates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evidence_id": {
+          "format": "uuid",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "issuer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issuer"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "statement": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Statement",
+          "type": "string"
+        },
+        "verification_status": {
+          "$ref": "#/$defs/VerificationStatus",
+          "default": "self_attested"
+        },
+        "verified_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verified At"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "kind",
+        "statement",
+        "created_at"
+      ],
+      "title": "EvidenceRecord",
+      "type": "object"
+    },
+    "ExportPermission": {
+      "enum": [
+        "allowed",
+        "review_required",
+        "prohibited"
+      ],
+      "title": "ExportPermission",
+      "type": "string"
+    },
+    "GeneratedSummary": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        },
+        {
+          "not": {
+            "properties": {
+              "export_permission": {
+                "const": "allowed"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "evidence_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "const": "ai_generated",
+          "default": "ai_generated",
+          "title": "Origin",
+          "type": "string"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "text": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "GeneratedSummary",
+      "type": "object"
+    },
+    "JobPreferences": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum_compensation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_int_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "preferred_locations": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_tuple_Annotated_str__StringConstraints___________"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "preferred_titles": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_tuple_Annotated_str__StringConstraints___________"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "remote_preference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProfileValue_Annotated_str__StringConstraints__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "JobPreferences",
+      "type": "object"
+    },
+    "PrivacyClassification": {
+      "enum": [
+        "public",
+        "internal",
+        "private",
+        "restricted"
+      ],
+      "title": "PrivacyClassification",
+      "type": "string"
+    },
+    "ProfileValue_Annotated_str__StringConstraints__": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "ai_generated"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "not": {
+              "properties": {
+                "export_permission": {
+                  "const": "allowed"
+                }
+              },
+              "required": [
+                "export_permission"
+              ]
+            }
+          }
+        }
+      ],
+      "properties": {
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "user"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "value": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ProfileValue[Annotated[str, StringConstraints]]",
+      "type": "object"
+    },
+    "ProfileValue_EmailStr_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "ai_generated"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "not": {
+              "properties": {
+                "export_permission": {
+                  "const": "allowed"
+                }
+              },
+              "required": [
+                "export_permission"
+              ]
+            }
+          }
+        }
+      ],
+      "properties": {
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "user"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "value": {
+          "format": "email",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ProfileValue[EmailStr]",
+      "type": "object"
+    },
+    "ProfileValue_int_": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "ai_generated"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "not": {
+              "properties": {
+                "export_permission": {
+                  "const": "allowed"
+                }
+              },
+              "required": [
+                "export_permission"
+              ]
+            }
+          }
+        }
+      ],
+      "properties": {
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "user"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ProfileValue[int]",
+      "type": "object"
+    },
+    "ProfileValue_tuple_Annotated_str__StringConstraints___________": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "privacy": {
+                "const": "restricted"
+              }
+            },
+            "required": [
+              "privacy"
+            ]
+          },
+          "then": {
+            "properties": {
+              "export_permission": {
+                "const": "prohibited"
+              }
+            },
+            "required": [
+              "export_permission"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "ai_generated"
+              }
+            },
+            "required": [
+              "origin"
+            ]
+          },
+          "then": {
+            "not": {
+              "properties": {
+                "export_permission": {
+                  "const": "allowed"
+                }
+              },
+              "required": [
+                "export_permission"
+              ]
+            }
+          }
+        }
+      ],
+      "properties": {
+        "export_permission": {
+          "$ref": "#/$defs/ExportPermission",
+          "default": "review_required"
+        },
+        "origin": {
+          "$ref": "#/$defs/ContentOrigin",
+          "default": "user"
+        },
+        "privacy": {
+          "$ref": "#/$defs/PrivacyClassification",
+          "default": "private"
+        },
+        "value": {
+          "items": {
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Value",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "ProfileValue[tuple[Annotated[str, StringConstraints], ...]]",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        },
+        "name": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        },
+        "project_id": {
+          "format": "uuid",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "project_id",
+        "name",
+        "description"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "Skill": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill_id",
+        "name"
+      ],
+      "title": "Skill",
+      "type": "object"
+    },
+    "VerificationStatus": {
+      "enum": [
+        "self_attested",
+        "source_verified",
+        "third_party_verified",
+        "disputed"
+      ],
+      "title": "VerificationStatus",
+      "type": "string"
+    },
+    "WorkExperience": {
+      "additionalProperties": false,
+      "properties": {
+        "dates": {
+          "$ref": "#/$defs/EvidenceBackedValue_DateRange_"
+        },
+        "experience_id": {
+          "format": "uuid",
+          "title": "Experience Id",
+          "type": "string"
+        },
+        "highlights": {
+          "items": {
+            "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+          },
+          "title": "Highlights",
+          "type": "array"
+        },
+        "organization": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        },
+        "title": {
+          "$ref": "#/$defs/EvidenceBackedValue_Annotated_str__StringConstraints__"
+        }
+      },
+      "required": [
+        "experience_id",
+        "organization",
+        "title",
+        "dates"
+      ],
+      "title": "WorkExperience",
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/lulobello/autonomous-career-engine/schemas/v1/candidate-profile.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "certifications": {
+      "items": {
+        "$ref": "#/$defs/Certification"
+      },
+      "title": "Certifications",
+      "type": "array"
+    },
+    "contact": {
+      "$ref": "#/$defs/ContactInfo"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "education": {
+      "items": {
+        "$ref": "#/$defs/Education"
+      },
+      "title": "Education",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRecord"
+      },
+      "title": "Evidence",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "generated_summaries": {
+      "items": {
+        "$ref": "#/$defs/GeneratedSummary"
+      },
+      "title": "Generated Summaries",
+      "type": "array"
+    },
+    "preferences": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JobPreferences"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "projects": {
+      "items": {
+        "$ref": "#/$defs/Project"
+      },
+      "title": "Projects",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "skills": {
+      "items": {
+        "$ref": "#/$defs/Skill"
+      },
+      "title": "Skills",
+      "type": "array"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "work_experience": {
+      "items": {
+        "$ref": "#/$defs/WorkExperience"
+      },
+      "title": "Work Experience",
+      "type": "array"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "contact",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "CandidateProfile",
+  "type": "object"
+}

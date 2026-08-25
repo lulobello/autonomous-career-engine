@@ -1,0 +1,39 @@
+name: Core contracts
+
+on:
+  pull_request:
+    paths:
+      - "packages/core/**"
+      - ".github/workflows/core-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "packages/core/**"
+      - ".github/workflows/core-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: packages/core/pyproject.toml
+      - name: Install core package
+        run: python -m pip install -e './packages/core[dev]'
+      - name: Lint
+        run: python -m ruff check packages/core
+      - name: Type check
+        run: python -m mypy packages/core/src
+      - name: Test
+        run: python -m pytest packages/core/tests -v
+      - name: Check generated schemas
+        run: python -m autonomous_career_engine.core.schema --check --output-dir packages/core/schemas/v1

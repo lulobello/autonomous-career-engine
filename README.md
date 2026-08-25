@@ -7,7 +7,7 @@
 
 Autonomous Career Engine is an open-source project for building a more deliberate, transparent job-search workflow. The system is designed to discover opportunities, explain candidate-job fit, draft application materials from verified experience, assist with application forms, track outcomes, and learn which strategies work—without taking control away from the job seeker.
 
-**Foundation stage:** architecture, governance, and implementation backlog are published; production workflows are not yet implemented.
+**Foundation stage:** governance, architecture, and the first executable contracts are published; discovery, ranking, documents, applications, and tracking remain unimplemented.
 
 ## Project status
 
@@ -15,6 +15,7 @@ Autonomous Career Engine is an open-source project for building a more deliberat
 |---|---|---|
 | Project governance and contributor workflow | Available | A public, forkable foundation for collaborative development |
 | Architecture and safety model | Available | Clear component boundaries, data flow, and review gates |
+| Canonical candidate and job contracts | Experimental | Versioned, provenance-aware Pydantic models and generated JSON Schema |
 | Job discovery and normalization | Planned | Compliant source adapters and a canonical job schema |
 | Explainable fit ranking | Planned | Evidence-backed factors, hard filters, and visible uncertainty |
 | Tailored resume and cover-letter generation | Planned | Truth-constrained drafts grounded in verified experience |
