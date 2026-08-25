@@ -16,6 +16,7 @@ Autonomous Career Engine is an open-source project for building a more deliberat
 | Project governance and contributor workflow | Available | A public, forkable foundation for collaborative development |
 | Architecture and safety model | Available | Clear component boundaries, data flow, and review gates |
 | Canonical candidate and job contracts | Experimental | Versioned, provenance-aware Pydantic models and generated JSON Schema |
+| Local persistence and migration strategy | Available | Local SQLite, OS-vault credentials, versioned migrations, managed backups, retention, and deletion boundaries |
 | Job discovery and normalization | Planned | Compliant source adapters and a canonical job schema |
 | Explainable fit ranking | Planned | Evidence-backed factors, hard filters, and visible uncertainty |
 | Tailored resume and cover-letter generation | Planned | Truth-constrained drafts grounded in verified experience |
@@ -68,7 +69,7 @@ The project uses a modular monorepo so the first vertical slice can run as one s
 
 ```text
 apps/          Future API and web entry points
-packages/      Core domain, discovery, ranking, documents,
+packages/      Core domain, persistence, discovery, ranking, documents,
                applications, tracking, and shared contracts
 examples/      Synthetic, privacy-safe fixtures and walkthroughs
 tests/         Unit, contract, integration, and end-to-end tests

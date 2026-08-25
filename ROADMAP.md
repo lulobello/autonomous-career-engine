@@ -7,7 +7,7 @@ This roadmap describes intended outcomes, not delivery promises. A milestone is 
 **Outcome:** a trustworthy base for the first end-to-end workflow.
 
 - Define canonical candidate-profile and job schemas.
-- Decide local persistence and migrations.
+- Adopt the [local persistence and migration decision](docs/decisions/0001-local-persistence.md).
 - Define configuration and secret-handling contracts.
 - Add synthetic candidate and job fixtures.
 - Specify a minimal discovery-to-review vertical slice.
